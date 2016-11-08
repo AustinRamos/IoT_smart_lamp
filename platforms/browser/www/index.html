@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<!-- Heavily based on Bluetooth Low Energy Lock (c) 2014-2015 Don Coleman
+     See: https://github.com/MakeBluetooth/ble-lock/blob/master/phonegap/www/js/index.js -->
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Lamp App</title>
+    </head>
+
+    <body>
+        <script type="text/javascript" src="cordova.js"></script>
+
+<div id="deviceListScreen">
+<h1>Devices</h1>
+
+<ul id="deviceList">
+  <li>Searching...</li>
+</ul>
+
+<div>
+  <button id="refreshButton">Refresh</button>
+</div>
+
+</div>
+
+
+
+
+<div id="lampControl">
+  <br />
+  <button id="onButton">On</button>
+  <br />
+  <button id="offButton">Off</button>
+  <br />
+  <button id="disconnectButton">Disconnect</button>
+  <br />
+  <br />
+
+  <!-- TODO: Add HTML here for the new elements on the control screen -->
+
+</div>
+
+
+
+
+<div id="statusDiv"></div>
+
+
+
+<div id="progress">
+  <p>Processing</p>
+</div>
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+
+    </body>
+</html>
