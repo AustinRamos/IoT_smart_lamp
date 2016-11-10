@@ -63,6 +63,183 @@ var app = {
         // See: http://cordova.apache.org/docs/en/6.x/cordova/events/events.html#page-toc-source
         document.addEventListener('deviceready', app.onDeviceReady, false);
     },
+    
+    //registers every time there is a change in the red slider and sends it to arduino accordingly
+     redslidechange : function (){
+        console.log("function");
+         var red_slide = document.getElementById("red_range");
+          //we are printing out the value of the red so the user is aware of what RGB value the colors are
+        document.getElementById("red").innerHTML = red_slide.value;
+        
+         var red = document.getElementById("red_range").value;
+           var data = new Uint8Array(2);
+        data[0] = 0x01;
+        data[1] = red;
+         app.writeData(data);
+        
+        
+    },
+//registers every time there is a change in the green slider and sends it to arduino accordingly
+    greenslidechange : function (){
+        console.log("green function");
+         var green_slide = document.getElementById("green_range");
+          //we are printing out the value of the green so the user is aware of what RGB value the colors are
+        document.getElementById("green").innerHTML = green_slide.value;
+        
+            var green = document.getElementById("green_range").value;
+            //writing to the new green val each time a change is made
+           var data = new Uint8Array(2);
+        data[0] = 0x03;
+        data[1] = green;
+         app.writeData(data);
+    },
+     //registers every time there is a change in the blue slider and sends it to arduino accordingly
+    blueslidechange : function (){
+        console.log(" blue function");
+         var blue_slide = document.getElementById("blue_range");
+         //we are printing out the value of the blue so the user is aware of what RGB value the colors are
+        document.getElementById("blue").innerHTML = blue_slide.value;
+        
+        var blue = document.getElementById("blue_range").value;
+           var data = new Uint8Array(2);
+        data[0] = 0x02;
+        data[1] = blue;
+         app.writeData(data);
+    },
+    on_Timer_Page : function(){
+        //hiding the main control pannel div and showing the ontimer div
+        console.log("ontimer");
+        //hide the old div and show the new one
+        
+        //this function is simply setting up the dive for the on timer page
+        document.getElementById("lampControl").hidden = true;
+        document.getElementById("onTimer").hidden = false;
+    },
+     //this function is simply setting up the dive for the off timer page
+    off_Timer_Page : function(){
+        
+              console.log("offtimer");
+        //hide the old div and show the new one
+        document.getElementById("lampControl").hidden = true;
+        document.getElementById("offTimer").hidden = false;
+    },
+    //this function is simply to go back to the main control panel from the off timer button
+    back_from_off_timer_function : function(){
+        //app logic to hide timer div and go back to main screen 
+         document.getElementById("lampControl").hidden = false;
+        document.getElementById("offTimer").hidden = true;
+    },
+     //this function is simply to go back to the main control panel from the on timer button
+     back_from_on_timer_function : function(){
+        //app logic to hide timer div and go back to main screen 
+         document.getElementById("lampControl").hidden = false;
+        document.getElementById("onTimer").hidden = true;
+    },
+    
+     //this function is called when the set on timer button is pressed. 
+     setontimer_function : function(){
+        // we get hours, minutes, and seconds from the ontimer input page, convert them to hex values, and send them to the arduino
+        var hours = document.getElementById("onHours").value;
+        var minutes = document.getElementById("onMinute").value;
+        var seconds = document.getElementById("onSecond").value;
+        
+        //convert time to string
+        hex_hours = hours.toString(16);
+        hex_minutes = minutes.toString(16);
+        hex_seconds = seconds.toString(16);
+             // console.log( "hex_seconds******")
+              //console.log( hex_seconds)
+              
+              //we will both set the timer and start the timer when they press this button
+              
+              
+              //sets the timer
+          
+         console.log("on timer setting finished");     
+        //timer start
+        
+        var data = new Uint8Array(5);
+        data[0] = 0x07;
+        data[1] = 0x01;
+        data[2] = hex_hours;
+        data[3] = hex_minutes;
+        data[4] = hex_seconds;
+
+        app.writeData(data);
+         
+        //the on timer works by saving the RGB values from the previous page before it turns off the lamp to allow it to turn back on again
+        //after a certain amount of time
+        
+        var red = document.getElementById("red_range").value;
+        var blue = document.getElementById("green_range").value;
+       var green = document.getElementById("blue_range").value;
+       
+        
+        //must turn the lamp off, but save the colors
+        //set the color     
+             
+        var data_n = new Uint8Array(5);
+        data_n[0] = 0x07;
+        data_n[1] = 0x02;
+        data_n[2] = red;
+        data_n[3] = green;
+        data_n[4] = blue;
+        app.uiOnLampOff();
+        console.log("on timer color is ready"); 
+        app.writeData(data_n); 
+
+        
+        
+
+        
+        
+        
+    },
+    //this function works in almost an identical way to the one above, although it is simpler because
+    //there is no need to save the RGB colors before turning them off
+     setofftimer_function : function(){
+        
+        var hours = document.getElementById("offHours").value;
+        var minutes = document.getElementById("offMinute").value;
+        var seconds = document.getElementById("offSecond").value;
+        
+        //convert time to string
+        hex_hours = hours.toString(16);
+        hex_minutes = minutes.toString(16);
+        hex_seconds = seconds.toString(16);
+             // console.log( "hex_seconds******")
+              //console.log( hex_seconds)
+              
+              //we will both set the timer and start the timer when they press this button
+              
+              
+              //sets the timer
+          
+         console.log("off timer setting finished");     
+        //timer start
+        
+        var data = new Uint8Array(5);
+        data[0] = 0x08;
+        data[1] = 0x01;
+        data[2] = hex_hours;
+        data[3] = hex_minutes;
+        data[4] = hex_seconds;
+
+        app.writeData(data);
+        
+        
+        //must turn the lamp on, but save the colors
+        
+        var data_n = new Uint8Array(5);
+        data_n[0] = 0x08;
+        data_n[1] = 0x02;
+        data_n[2] = 0x00;
+        data_n[3] = 0x00;
+        data_n[4] = 0x00;
+        app.uiOnLampOn();
+        console.log("off timer color is ready"); 
+        app.writeData(data_n); 
+    },
 
 // **** Callbacks for application "lifecycle" events. These respond to significant events when the App runs ******
 
@@ -77,15 +254,155 @@ var app = {
         refreshButton.disabled = false;
         deviceList.ontouchstart = app.uiOnConnect;
         onButton.ontouchstart = app.uiOnLampOn;
-	    offButton.ontouchstart = app.uiOnLampOff;
+   offButton.ontouchstart = app.uiOnLampOff;
         disconnectButton.ontouchstart = app.uiOnDisconnect;
+        
+       //hide the divs upon loading
+        document.getElementById("onTimer").hidden = true; // hide one of the divs
+ 
+ document.getElementById("offTimer").hidden = true;
+     document.getElementById("discoModediv").hidden = true;
+        
+        //get ranges of rgb
+        
+        var red_slide = document.getElementById("red_range");
+    red_slide.onchange = app.redslidechange;
+    
+     var green_slide = document.getElementById("green_range");
+    green_slide.onchange = app.greenslidechange;
+    
+     var blue_slide = document.getElementById("blue_range");
+    blue_slide.onchange = app.blueslidechange;
+    
+    var ontimer = document.getElementById("ontimerbutton");
+   ontimer.onclick = app.on_Timer_Page;
+   
+      var offtimer = document.getElementById("offtimerbutton");
+   offtimer.onclick = app.off_Timer_Page;
 
-        // TODO: Configure the new controls so they will "call" a function when an event happens
+   //buttons to go back to main page from on/off timers
+  var back_from_on_timer = document.getElementById("ontimertomainpage");
+ 
+ back_from_on_timer.onclick = app.back_from_on_timer_function;
+  
+    var back_from_off_timer = document.getElementById("offtimertomainpage");
+   back_from_off_timer.onclick = app.back_from_off_timer_function;
+   
+//below are all the events for all the buttons. a lot of them are simply for showing and hiding divs, and are not worth commenting individually on.
+   
+   var setontimer = document.getElementById("setontimer");
+   setontimer.onclick = app.setontimer_function;
+   
+    var setofftimer = document.getElementById("setofftimer");
+    setofftimer.onclick = app.setofftimer_function;
 
-        // Call the uiOnScan function to automatically start scanning
-        app.uiOnScan();
+    var setDuration = document.getElementById("setDuration");
+    setDuration.onclick = app.setDuration_function;
+
+   
+
+    var onFade = document.getElementById("onFade");
+    onFade.onclick = app.onFade_function;
+
+    var offFade = document.getElementById("offFade");
+    offFade.onclick = app.offFade_function;
+   
+   
+   var discoMode = document.getElementById("discoMode");
+   discoMode.onclick = app.go_to_disco_div;
+   
+   
+   var back_from_disco = document.getElementById("back_from_disco");
+   back_from_disco.onclick = app.back_from_disco_function;
+   
+   
+   var disco1Mode = document.getElementById("discoMode1");
+   disco1Mode.onclick = app.disco1_function;
+   
+   var disco_mode_off = document.getElementById("disco_mode_off");
+         disco_mode_off.onclick = app.disco_mode_off_function;
+         
+         
+         
+         var disco2Mode = document.getElementById("discoMode2");
+   disco2Mode.onclick  = app. disco2_function;
+                   
+                  app.uiOnScan();
+    },
+    //this method is a simple
+    disco_mode_off_function:function(){
+            var data = new Uint8Array(2);
+         data[0] = 0x0A;
+        data[1] = 0x04;
+        app.writeData(data);
+    },
+    disco1_function:function(){
+         var data = new Uint8Array(2);
+    //turn on simple mode 1... refer to arduino documentation on how the tags work.
+        data[0] = 0x0A;
+        data[1] = 0x01;
+        app.writeData(data);
+        
+    },
+    disco2_function:function(){
+        
+        //this write() is necessary to set up. 3 bytes taken in.
+          var data_1 = new Uint8Array(3);
+          var increment = document.getElementById("disco_increment");
+        data_1[0] = 0x0A;
+        data_1[1] = 0x02;
+        data_1[2] = increment;//increment -> SHOULD BE CONTROLLED BY USER MAKE A SMALL INPUT
+        app.writeData(data_1);
+//this is necessary to turn it on
+         var data = new Uint8Array(2);
+        data[0] = 0x0A;
+        data[1] = 0x03;
+        app.writeData(data);
+        
+    } ,
+    //simply sets up the proper divs to go back to the main screen
+    back_from_disco_function:function(){
+         document.getElementById("lampControl").hidden = false;
+    document.getElementById("discoModediv").hidden = true;
+    },
+//navigates the user to the disco mode div page
+   go_to_disco_div: function(){
+     document.getElementById("lampControl").hidden = true;
+    document.getElementById("discoModediv").hidden = false;
+    
+   },
+//sets the duration for the fade, by recieving it from the DOM
+    setDuration_function:function(){
+        console.log("setDuration");
+        var data = new Uint8Array(3);
+        var duration=document.getElementById("duration").value;
+        data[0] = 0x09;
+        data[1] = 0x01;
+        data[2] = duration;
+        console.log(duration);
+        app.writeData(data);
     },
 
+//sets up the fading when the button "Fade on" is pressed
+    onFade_function:function(){
+        console.log("onFade");
+        var data = new Uint8Array(2);
+        data[0] = 0x09;
+        data[1] = 0x03;
+        app.uiOnLampOn();
+        app.writeData(data);
+    },
+
+    offFade_function:function(){
+        console.log("offFade");
+        var data = new Uint8Array(2);
+        data[0] = 0x09;
+        data[1] = 0x04;
+        app.writeData(data);
+    },
+
+    
+    
 
 
 // **** Callbacks from the user interface.  These respond to UI events ****
@@ -140,15 +457,27 @@ var app = {
 
     uiOnLampOn: function() {
         console.log("uiOnLampOn");
-        var data = new Uint8Array(1);
-        data[0] = 0x1;
+        var data = new Uint8Array(4);
+       var red = document.getElementById("red_range").value;
+        var blue = document.getElementById("green_range").value;
+       var green = document.getElementById("blue_range").value;
+         
+        data[0] = 0x04;
+        data[1] = red;
+          data[3] = green;
+            data[2] = blue;
+        
+        
         app.writeData(data);
     },
 
     uiOnLampOff: function() {
         console.log("uiOnLampOff");
-        var data = new Uint8Array(1);
-        data[0] = 0x0;
+        var data = new Uint8Array(4);
+        data[0] = 0x04;
+        data[1] = 0x00;
+         data[2] = 0x00;
+          data[3] = 0x00;
         app.writeData(data);
     },
 
@@ -258,7 +587,8 @@ var app = {
             alert("Failed writing data");
         };
         ble.writeWithoutResponse(app.connectedPeripheral.id, SERVICE_UUID, WRITE_UUID, data.buffer, success, failure);
-    },
+        
+    }
 };
 
 // When this code is loaded the app.initialize() function is called

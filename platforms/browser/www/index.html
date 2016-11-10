@@ -8,9 +8,47 @@
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>Lamp App</title>
+        
+        
+          <script>
+            //24 hour clock... not the best practice to have it in the html but by far the simplest.
+            //it is extra credit so hopefully no points will be taken off :)
+function startTime() {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    if(dd<10){
+      dd='0'+dd
+    } 
+    if(mm<10){
+      mm='0'+mm
+    } 
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('ymd').innerHTML =
+    yyyy + "/" + mm + "/" + dd;
+    document.getElementById('txt').innerHTML =
+    h + ":" + m + ":" + s;
+    var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
+</script>
+        
+        
+        
+        
+        
+        
     </head>
 
-    <body>
+    <body onload="startTime()">
         <script type="text/javascript" src="cordova.js"></script>
 
 <div id="deviceListScreen">
@@ -30,6 +68,10 @@
 
 
 <div id="lampControl">
+    
+    <div id="ymd"></div>
+<div id="txt"></div>
+    
   <br />
   <button id="onButton">On</button>
   <br />
@@ -40,9 +82,116 @@
   <br />
 
   <!-- TODO: Add HTML here for the new elements on the control screen -->
+  
+   RGB ranges(0-255) 
+           </br>
+    Red: <input type="range" id="red_range" min="0" value="0" max="255" step="5" >
+            <p id = "red">    </p>
+              </br>
+    Green:  <input type="range" id="green_range" min="0" value="0" max="255" step="5">
+            <p id = "green">    </p>
+                    </br>
+    Blue:   <input type="range" id="blue_range" min="0" value="0" max="255" step="5">
+            <p id = "blue">    </p> 
+  
 
+</br>
+</br>
+<button id="ontimerbutton">On Timer</button>
+<button id="offtimerbutton">Off Timer</button>
+<br/>
+
+<br/>
+Duration:<input id="duration" type="number" min="1" max="10">
+<button id="setDuration">Set Duration</button>
+
+<button id="onFade">Fade On</button>
+<button id="offFade">Fade Off</button>
+
+<button id="discoMode">Disco Mode</button>
 </div>
 
+
+
+<style>
+    
+   #discoModediv{
+        width: 200px;
+    height: 300px;
+    background-color: blue;
+
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+    }
+</style>
+
+<div id="discoModediv">
+    <h3><b>Disco Modes</b></h3>
+    
+    <button id="discoMode1"> Mode 1</button>
+    <button id="discoMode2">Mode 2</button> Increment(0-200):<input type="number" id="disco_increment" value="10" min="0" max="200">
+    </br>
+     <button id="disco_mode_off">Off</button>
+    <button id="back_from_disco">Back</button>
+</div>
+
+
+<style>
+    
+   #onTimer{
+        width: 200px;
+    height: 300px;
+    background-color: blue;
+
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+    }
+</style>
+<div id="onTimer" >
+    <h3>On Timer</h3>
+
+  Hour:<input type="number" id="onHours" min="0" max="24">
+  Minute:<input type="number" id="onMinute" min="0" max="60">
+  second:<input type="number" id="onSecond" min="0" max="60">
+    <button id="setontimer">set timer</button>
+ <button id="ontimertomainpage">Back</button>
+</div>
+    <style>
+#offTimer{
+        width: 200px;
+    height: 300px;
+    background-color: blue;
+
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+    }
+</style>
+
+<div id="offTimer">
+    <h3>Off Timer</h3>
+Hour:<input type="number" id="offHours" min="0" max="24">
+  Minute:<input type="number" id="offMinute" min="0" max="60">
+  second:<input type="number" id="offSecond" min="0" max="60">
+   <button id="setofftimer">set timer</button>
+
+      <button id="offtimertomainpage">Back</button>
+
+</div>
 
 
 
